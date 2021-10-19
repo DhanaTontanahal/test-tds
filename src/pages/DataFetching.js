@@ -1,12 +1,16 @@
 import React, {useState , useEffect} from 'react'
 import axios from 'axios';
 import { API_URL } from '../constants/appConstants';
-import Loader from "./Loader";
+import Loader from "../components/Loader";
+import { useHistory } from 'react-router-dom';
+
 
 function DataFetching() {
     const [loading, setloading] = useState(false);
     const [posts , setPosts] = useState([]);
-    const [post, setPost] = useState({})
+    const [post, setPost] = useState({});
+    const history = useHistory();
+
 
     const fetchData=()=>{
         axios.get(API_URL)
@@ -20,16 +24,7 @@ function DataFetching() {
         })
     }
 
-    const fetchDataById=(id)=>{
-        axios.get(`${API_URL}${id}`)
-        .then(({data})=>{
-            setloading(false);
-            setPost(data)
-        })
-        .catch((e)=>{
-            console.log(e)
-        })
-    }
+
 
 
     useEffect(()=>{
@@ -38,7 +33,9 @@ function DataFetching() {
     },[])
 
     const handleEachPostClick=({id})=>{
-        fetchDataById(id)
+        //navigate to route with an ID
+        console.log(id)
+        history.push('/dashboard/'+id);
     }
     
     return (
@@ -48,7 +45,10 @@ function DataFetching() {
                 <ul>
                 {
                     posts.map(post=>{
-                        return(<li onClick={()=>handleEachPostClick(post)} key={post.id}>{post.title}</li>)
+                        return(<li key={post.id}>
+                            {post.title}
+                            &nbsp;<button onClick={()=>handleEachPostClick(post)}>View</button>
+                            </li>)
                     })
                 }
             </ul>
